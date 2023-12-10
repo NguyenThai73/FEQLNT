@@ -21,16 +21,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class XemHoaDon extends StatefulWidget {
+class XemHoaDonUer extends StatefulWidget {
   final HoaDonModel hoaDonModel;
   final Function callback;
-  const XemHoaDon({super.key, required this.hoaDonModel, required this.callback});
+  const XemHoaDonUer({super.key, required this.hoaDonModel, required this.callback});
 
   @override
-  State<XemHoaDon> createState() => _XemHoaDonState();
+  State<XemHoaDonUer> createState() => _XemHoaDonUerState();
 }
 
-class _XemHoaDonState extends State<XemHoaDon> {
+class _XemHoaDonUerState extends State<XemHoaDonUer> {
   final _bloc = QuanLyHoaDonBloc();
   TextEditingController tienPhatSinh = TextEditingController(text: "0");
   TextEditingController des = TextEditingController();
@@ -99,29 +99,6 @@ class _XemHoaDonState extends State<XemHoaDon> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        actions: [
-          //  IconButton(
-          //     onPressed: () async {
-          //     },
-          //     icon: Icon(
-          //        Icons.delete,
-          //       color: Colors.red,
-          //     )),
-          IconButton(
-              onPressed: () async {
-                setState(() {
-                  edit = !edit;
-                });
-                if (edit) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  _bloc.add(SuaHoaDonEvent(hoaDonModel: hoaDonModel));
-                }
-              },
-              icon: Icon(
-                edit ? Icons.done : Icons.edit,
-                color: Colors.white,
-              ))
-        ],
       ),
       body: BlocConsumer<QuanLyHoaDonBloc, QuanLyHoaDonState>(
           bloc: _bloc,

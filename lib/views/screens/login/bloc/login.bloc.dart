@@ -27,10 +27,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         } else {
           var user = await NguoiDungProvider.login(email: event.username, password: event.password);
           if (user != null) {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString("id", "${user.id}");
-            prefs.setString("role", "${user.role}");
-            emit(LoginSuccessState(role: user.role ?? 0));
+            if (user.role == 0) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString("id", "${user.id}");
+              prefs.setString("role", "${user.role}");
+              emit(LoginSuccessState(role: user.role ?? 0));
+            } else {
+              if (user.status == 0 || user.hopDong?.status == 0 || user.hopDong?.status == null) {
+                emit(LoginFailure(error: "Bạn không có quyền truy cập vào ứng dụng"));
+              } else {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setString("id", "${user.id}");
+                prefs.setString("role", "${user.role}");
+                emit(LoginSuccessState(role: user.role ?? 0));
+              }
+            }
           } else {
             emit(LoginFailure(error: "Tài khoản mật khẩu sai"));
           }

@@ -102,7 +102,7 @@ class _NguoiDungScreenState extends State<NguoiDungScreen> {
                                       flex: 5,
                                       child: SropSearchWidget<HopDongModel>(
                                         getList: HopDongProvider.getListAll(),
-                                        title: (HopDongModel u) => u.phong!.name!,
+                                        title: (HopDongModel u) => (u.dateStart != null) ? "${u.phong!.name!} (${DateFormat('MM-yyyy').format(DateTime.parse(u.dateStart!).toLocal())})" : u.phong?.name ?? "",
                                         selected: selectHopDong,
                                         onChange: (value) {
                                           setState(() {
@@ -170,7 +170,7 @@ class _NguoiDungScreenState extends State<NguoiDungScreen> {
                           return Container(
                             margin: const EdgeInsets.all(10),
                             width: MediaQuery.of(context).size.width,
-                            height: 130,
+                            height: 150,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(width: 2, color: const Color.fromARGB(255, 105, 188, 255)),
@@ -231,6 +231,13 @@ class _NguoiDungScreenState extends State<NguoiDungScreen> {
                                         SizedBox(height: 3),
                                         Text(
                                           "Phòng: ${listNguoiDung[index].hopDong?.phong?.name}",
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                        SizedBox(height: 3),
+                                        Text(
+                                          "Trạng thái hợp đồng: ${listNguoiDung[index].hopDong?.status == 1 ? "Hoạt động" : "Hết hạn"}",
+                                          style: TextStyle(color: listNguoiDung[index].hopDong?.status == 1 ? Colors.green : Colors.red, fontWeight: FontWeight.w500),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                         ),

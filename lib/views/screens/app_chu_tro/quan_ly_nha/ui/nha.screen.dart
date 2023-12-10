@@ -34,7 +34,7 @@ class _QuanLyNhaScreenState extends State<QuanLyNhaScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-           leading: Row(),
+          leading: Row(),
           backgroundColor: Colors.blue,
           title: const Center(
               child: Text(

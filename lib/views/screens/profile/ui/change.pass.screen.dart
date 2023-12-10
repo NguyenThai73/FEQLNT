@@ -1,8 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fe/apps/widgets/border_textfield.dart';
+import 'package:fe/apps/widgets/toast.dart';
+import 'package:fe/models/nguoi-dung/user.model.dart';
+import 'package:fe/z_provider/nguoi.dung.provider.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordScrren extends StatefulWidget {
-  const ChangePasswordScrren({super.key});
+  final NguoiDungModel nguoiDungModel;
+  const ChangePasswordScrren({super.key, required this.nguoiDungModel});
 
   @override
   State<ChangePasswordScrren> createState() => _ChangePasswordScrrenState();
@@ -71,14 +77,51 @@ class _ChangePasswordScrrenState extends State<ChangePasswordScrren> {
                     width: 170,
                     decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(5)),
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        if (passwordNewController.text.isEmpty || confirmPassController.text.isEmpty) {
+                          showToast(
+                            context: context,
+                            msg: "Không được để trống",
+                            color: Colors.orange,
+                            icon: const Icon(Icons.warning),
+                          );
+                        } else if (passwordNewController.text != confirmPassController.text) {
+                          showToast(
+                            context: context,
+                            msg: "Xác nhận mật khẩu không khớp",
+                            color: Colors.orange,
+                            icon: const Icon(Icons.warning),
+                          );
+                        } else {
+                          var response = await NguoiDungProvider.changePassword(idUSer: widget.nguoiDungModel.id ?? 0, newpass: passwordNewController.text);
+                          if (response) {
+                            showToast(
+                              context: context,
+                              msg: "Thay đổi mật khẩu thành công",
+                              color: const Color.fromARGB(255, 212, 255, 214),
+                              icon: const Icon(Icons.done),
+                            );
+                            setState(() {
+                              passwordNewController.text = "";
+                              confirmPassController.text = "";
+                            });
+                          } else {
+                            showToast(
+                              context: context,
+                              msg: "Có lỗi xảy ra",
+                              color: Colors.orange,
+                              icon: const Icon(Icons.warning),
+                            );
+                          }
+                        }
                       },
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             "Cập nhật",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,
                               fontStyle: FontStyle.normal,

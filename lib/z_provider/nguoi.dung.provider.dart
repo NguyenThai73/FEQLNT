@@ -149,4 +149,55 @@ class NguoiDungProvider {
     }
     return nguoiDungModel;
   }
+
+  // <<<< Get list id Hợp đồng đã có hoá đơn theo tháng >>>>
+  static Future<List<NguoiDungModel>> getListDangThue() async {
+    List<NguoiDungModel> listData = [];
+    try {
+      var url = "$baseUrl/api/nguoi-dung/get/page?filter=role:1 and hopDong.status:1";
+      var response = await http.get(Uri.parse(url.toString()));
+      if (response.statusCode == 200) {
+        var bodyConvert = jsonDecode(response.body);
+        if (bodyConvert['success'] == true) {
+          for (var element in bodyConvert['result']['content']) {
+            NguoiDungModel item = NguoiDungModel.fromMap(element);
+            listData.add(item);
+          }
+        }
+      }
+    } catch (e) {
+      print("Loi $e");
+    }
+    return listData;
+  }
+
+  static Future<NguoiDungModel> getAdmin() async {
+    NguoiDungModel? admin;
+    try {
+      var url = "$baseUrl/api/nguoi-dung/get/page?filter=role:0";
+      var response = await http.get(Uri.parse(url.toString()));
+      if (response.statusCode == 200) {
+        var bodyConvert = jsonDecode(response.body);
+        if (bodyConvert['success'] == true) {
+          if (bodyConvert['result']['content'].isNotEmpty) {
+            admin = NguoiDungModel.fromMap(bodyConvert['result']['content'].first);
+          }
+        }
+      }
+    } catch (e) {
+      print("Loi $e");
+    }
+    return admin ?? NguoiDungModel();
+  }
+
+  static Future<bool> changePassword({required int idUSer, required String newpass}) async {
+    try {
+      var userLogin = {"userName": "", "password": newpass};
+      var url = "$baseUrl/api/nguoi-dung/change-pass/$idUSer";
+      Map<String, String> header = await getHeader();
+      await http.post(Uri.parse(url.toString()), headers: header, body: json.encode(userLogin));
+      return true;
+    } catch (e) {}
+    return false;
+  }
 }

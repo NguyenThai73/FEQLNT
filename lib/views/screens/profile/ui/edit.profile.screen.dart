@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:fe/apps/widgets/textfiel.dart';
+import 'package:fe/apps/widgets/toast.dart';
 import 'package:fe/models/nguoi-dung/user.model.dart';
 import 'package:fe/views/component/loading/loading.dart';
 import 'package:fe/z_provider/base.url.dart';
+import 'package:fe/z_provider/nguoi.dung.provider.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScrren extends StatefulWidget {
@@ -112,7 +114,6 @@ class _EditProfileScrrenState extends State<EditProfileScrren> {
                         countFile = listFile.length;
                       }
                     });
-                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   },
                   child: Row(
@@ -134,19 +135,34 @@ class _EditProfileScrrenState extends State<EditProfileScrren> {
                     padding: const EdgeInsets.all(15),
                     width: 170,
                     decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(5)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Cập nhật",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w600,
+                    child: InkWell(
+                      onTap: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        nguoiDungModel.fullName = fullName.text;
+                        nguoiDungModel.namSinh = namSinh.text;
+                        nguoiDungModel.sdt = sdt.text;
+                        await NguoiDungProvider.sua(nguoiDungModel);
+                        showToast(
+                          context: context,
+                          msg: "Cập nhật thành công",
+                          color: const Color.fromARGB(255, 212, 255, 214),
+                          icon: const Icon(Icons.done),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Cập nhật",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],

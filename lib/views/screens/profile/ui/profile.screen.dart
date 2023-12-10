@@ -3,7 +3,6 @@ import 'package:fe/apps/widgets/toast.dart';
 import 'package:fe/models/nguoi-dung/user.model.dart';
 import 'package:fe/views/component/loading/loading.dart';
 import 'package:fe/views/screens/profile/bloc/profile.bloc.dart';
-import 'package:fe/z_provider/base.url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'change.pass.screen.dart';
@@ -71,107 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    (nguoiDungModel.avatar != null && nguoiDungModel.avatar != "")
-                        ? Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              image: DecorationImage(
-                                image: NetworkImage("$baseUrl/api/files/${nguoiDungModel.avatar!}"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () async {
-                                var avatarPath = await handleUploadAvater();
-                                setState(() {
-                                  nguoiDungModel.avatar = avatarPath;
-                                });
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.black),
-                                          // margin: const EdgeInsets.only(top: 170),
-                                          child: const Icon(
-                                            Icons.photo_camera,
-                                            color: Colors.white,
-                                            size: 30,
-                                          )),
-                                      const SizedBox(
-                                        width: 25,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              image: const DecorationImage(
-                                image: AssetImage("assets/images/avt.png"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () async {
-                                var avatarPath = await handleUploadAvater();
-                                setState(() {
-                                  nguoiDungModel.avatar = avatarPath;
-                                });
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.black),
-                                          // margin: const EdgeInsets.only(top: 170),
-                                          child: const Icon(
-                                            Icons.photo_camera,
-                                            color: Colors.white,
-                                            size: 30,
-                                          )),
-                                      const SizedBox(
-                                        width: 25,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          nguoiDungModel.fullName ?? "",
-                          style: const TextStyle(
-                            fontSize: 22,
-                            color: Colors.black,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                    TitleDataUer(titile: "Họ và tên ", content: nguoiDungModel.fullName ?? ""),
                     TitleDataUer(titile: "Tên đăng nhập", content: nguoiDungModel.username ?? ""),
                     TitleDataUer(titile: "Năm sinh", content: nguoiDungModel.namSinh ?? ""),
                     TitleDataUer(titile: "Số điện thoại", content: nguoiDungModel.sdt ?? ""),
@@ -218,7 +117,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.push<void>(
                                 context,
                                 MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => const ChangePasswordScrren(),
+                                  builder: (BuildContext context) => ChangePasswordScrren(
+                                    nguoiDungModel: nguoiDungModel,
+                                  ),
                                 ),
                               );
                             },

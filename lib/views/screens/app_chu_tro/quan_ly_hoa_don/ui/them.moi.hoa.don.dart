@@ -28,9 +28,10 @@ class _ThemHoaDonState extends State<ThemHoaDon> {
   final _bloc = QuanLyHoaDonBloc();
   TextEditingController tienPhatSinh = TextEditingController(text: "0");
   TextEditingController des = TextEditingController();
-  HoaDonModel hoaDonModel = HoaDonModel(status: 1, total: 0, fine: 0);
+  HoaDonModel hoaDonModel = HoaDonModel(status: 0, total: 0, fine: 0);
   List<int> listHopDongDaCoHoaDon = [];
   int countFile = 0;
+  String? dateDisplay;
 
   List<TextEditingController> listInputDichVu = [];
   getListDichVu() async {
@@ -113,12 +114,10 @@ class _ThemHoaDonState extends State<ThemHoaDon> {
             if (state is QuanLyHoaDonLoading) {
               onLoading(context);
               return;
-            }
-            else if (state is ThemMoiSuccess) {
+            } else if (state is ThemMoiSuccess) {
               Navigator.pop(context);
               Navigator.pop(context);
-            }
-            else if (state is QuanLyHoaDonError) {
+            } else if (state is QuanLyHoaDonError) {
               Navigator.pop(context);
               showToast(
                 context: context,
@@ -259,7 +258,7 @@ class _ThemHoaDonState extends State<ThemHoaDon> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "File hợp đồng",
+                          "File đính kèm",
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                         Container(
@@ -335,11 +334,10 @@ class _ThemHoaDonState extends State<ThemHoaDon> {
                           'Ngày đến hạn',
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                         ),
-                        dateDisplay: hoaDonModel.dueDate,
+                        dateDisplay: dateDisplay,
                         selectedDateFunction: (day) {
                           FocusScope.of(context).requestFocus(FocusNode());
                           hoaDonModel.dueDate = day;
-                          setState(() {});
                         }),
                     SizedBox(height: 30),
                     Row(
@@ -353,8 +351,6 @@ class _ThemHoaDonState extends State<ThemHoaDon> {
                             onTap: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
                               print((hoaDonModel.toMap()));
-
-                              // hopDongModel.numberPeople = int.tryParse(numberPeople.text) ?? 0;
                               _bloc.add(ThemHoaDonEvent(hoaDonModel: hoaDonModel));
                             },
                             child: const Center(

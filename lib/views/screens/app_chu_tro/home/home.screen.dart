@@ -1,5 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:fe/z_provider/hoa.don.provider.dart';
+import 'package:fe/z_provider/hop.dong.provider.dart';
+import 'package:fe/z_provider/nguoi.dung.provider.dart';
+import 'package:fe/z_provider/phong.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,10 +29,45 @@ class _HomeChuTroScreenState extends State<HomeChuTroScreen> {
   //
   int nguoiThueCount = 0;
 
-
   setData() async {
+    getCountHoaDon();
+    getHopDong();
+    getPhongTro();
+    getNguoiThue();
     setState(() {
       timeNow = DateFormat('MM-yyyy').format(DateTime.now());
+    });
+  }
+
+  getCountHoaDon() async {
+    var listHD = await HoaDonProvider.getList(dateSearch: "${DateFormat('yyyy-MM').format(DateTime.now())}-01");
+    var listHDDaDong = await HoaDonProvider.getList(status: 2, dateSearch: "${DateFormat('yyyy-MM').format(DateTime.now())}-01");
+    setState(() {
+      hoaDonCount = listHD.length;
+      hoaDonDaDong = listHDDaDong.length;
+    });
+  }
+
+  getHopDong() async {
+    var listHopDong = await HopDongProvider.getList(selectedStatus: 1, numberPage: 0);
+    setState(() {
+      hopDongCount = listHopDong.length;
+    });
+  }
+
+  getPhongTro() async {
+    var listPhongTro = await PhongProvider.getList();
+    var listPhongTroCT = await PhongProvider.getListDaThue();
+    setState(() {
+      phongCount = listPhongTro.length;
+      phongDatThue = listPhongTroCT.length;
+    });
+  }
+
+  getNguoiThue() async {
+    var listNguoiThue = await NguoiDungProvider.getListDangThue();
+    setState(() {
+      nguoiThueCount = listNguoiThue.length;
     });
   }
 

@@ -104,4 +104,25 @@ class PhongProvider {
     }
     return listData;
   }
+
+    // <<<< Get list >>>>
+  static Future<List<PhongModel>> getListDaThue() async {
+    List<PhongModel> listData = [];
+    try {
+      var url = "$baseUrl/api/phong/get/page?filter=status:2";
+      var response = await http.get(Uri.parse(url.toString()));
+      if (response.statusCode == 200) {
+        var bodyConvert = jsonDecode(response.body);
+        if (bodyConvert['success'] == true) {
+          for (var element in bodyConvert['result']['content']) {
+            PhongModel item = PhongModel.fromMap(element);
+            listData.add(item);
+          }
+        }
+      }
+    } catch (e) {
+      print("Loi $e");
+    }
+    return listData;
+  }
 }

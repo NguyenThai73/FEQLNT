@@ -35,11 +35,11 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
   String? selectDate;
 
   PhongModel? selectPhong = PhongModel(name: "Tất cả");
-  int selectedStatus = 1;
+  int selectedStatus = -1;
   @override
   void initState() {
     super.initState();
-    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, numberPage: numberPage));
+    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, date: selectDate));
   }
 
   @override
@@ -88,13 +88,13 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
                 onNotification: (scrollNotification) {
                   if (scrollNotification is ScrollEndNotification && _scrollController.position.extentAfter == 0) {
                     numberPage += 1;
-                    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, numberPage: numberPage));
+                    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, date: selectDate));
                   } else if (scrollNotification is ScrollEndNotification && _scrollController.position.extentBefore == 0) {
                     setState(() {
                       listHoaDon = [];
                       numberPage = 0;
                     });
-                    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, numberPage: numberPage));
+                    _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, date: selectDate));
                   }
                   return true;
                 },
@@ -170,7 +170,7 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
                                           setState(() {
                                             listHoaDon = [];
                                           });
-                                          _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, numberPage: 0));
+                                          _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, date: selectDate));
                                         },
                                         child: Center(
                                           child: Text(
@@ -194,7 +194,7 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
                           return Container(
                             margin: const EdgeInsets.all(10),
                             width: MediaQuery.of(context).size.width,
-                            height: 130,
+                            height: 135,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(width: 2, color: const Color.fromARGB(255, 105, 188, 255)),
@@ -215,25 +215,25 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
                                 listHoaDon[index].listTotalDichVu = [];
                                 var dataDecode = jsonDecode(listHoaDon[index].data.toString()) as Map<String, dynamic>;
                                 for (var element in dataDecode.entries) {
-                                   DichVuModel itemDichVu = await DichVuProvider.getById(element.key);
-                                    int soluongItem = int.tryParse(element.value.toString()) ?? 0;
-                                    int total = itemDichVu.donGia ?? 0 * soluongItem;
-                                    listHoaDon[index].listDichVu?.add(itemDichVu);
-                                    listHoaDon[index].listSoLuong?.add(soluongItem);
-                                    listHoaDon[index].listTotalDichVu?.add(total);
+                                  DichVuModel itemDichVu = await DichVuProvider.getById(element.key);
+                                  int soluongItem = int.tryParse(element.value.toString()) ?? 0;
+                                  int total = itemDichVu.donGia ?? 0 * soluongItem;
+                                  listHoaDon[index].listDichVu?.add(itemDichVu);
+                                  listHoaDon[index].listSoLuong?.add(soluongItem);
+                                  listHoaDon[index].listTotalDichVu?.add(total);
                                 }
                                 await Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
                                     builder: (BuildContext context) => XemHoaDon(
                                       hoaDonModel: listHoaDon[index],
-                                      // callBack: (value) {
-                                      //   if (value != null) {
-                                      //     setState(() {
-                                      //       listHoaDon[index] = value;
-                                      //     });
-                                      //   }
-                                      // },
+                                      callback: (value) {
+                                        if (value != null) {
+                                          setState(() {
+                                            listHoaDon[index] = value;
+                                          });
+                                        }
+                                      },
                                     ),
                                   ),
                                 );
@@ -254,15 +254,22 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
                                       children: [
                                         Text(
                                           "Hoá đơn tháng ${listHoaDon[index].name != null ? DateFormat('MM-yyyy').format(DateTime.parse(listHoaDon[index].name ?? "").toLocal()) : ""}",
-                                          style: TextStyle(fontSize: 22),
+                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                                           overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 3),
+                                        Text(
+                                          "Phòng: ${listHoaDon[index].hopDong?.phong?.name ?? ""}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontWeight: FontWeight.w500),
+                                          maxLines: 2,
                                         ),
                                         SizedBox(height: 3),
                                         Text(
                                           "Trạng thái: ${valueStatusHoaDon(listHoaDon[index].status ?? -1)}",
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
-                                          style: TextStyle(color: (listHoaDon[index].status == 1) ? Colors.green : Colors.red),
+                                          style: TextStyle(color: colorsStatusHoaDon(listHoaDon[index].status ?? -1), fontWeight: FontWeight.w500),
                                         ),
                                         SizedBox(height: 3),
                                         Text(
@@ -312,7 +319,7 @@ class _HoaDonScreenState extends State<HoaDonScreen> {
             setState(() {
               listHoaDon = [];
             });
-            _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, numberPage: numberPage));
+            _bloc.add(GetListHoaDonEvent(selectedStatus: selectedStatus, date: selectDate));
           },
           child: const Icon(
             Icons.add,

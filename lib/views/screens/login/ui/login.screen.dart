@@ -121,9 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             Expanded(
                               child: InkWell(
                                 onTap: () {
+                                    FocusScope.of(context).requestFocus(FocusNode());
                                   _bloc.add(StartLoginEvent(username: usernameController.text, password: passwordController.text));
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Login",
                                   style: TextStyle(color: Colors.white),
                                   textAlign: TextAlign.center,

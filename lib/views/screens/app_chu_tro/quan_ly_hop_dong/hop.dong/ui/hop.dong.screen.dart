@@ -168,7 +168,7 @@ class _HopDongScreenState extends State<HopDongScreen> {
                           return Container(
                             margin: const EdgeInsets.all(10),
                             width: MediaQuery.of(context).size.width,
-                            height: 130,
+                            height: 120,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(width: 2, color: const Color.fromARGB(255, 105, 188, 255)),
@@ -215,8 +215,8 @@ class _HopDongScreenState extends State<HopDongScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Hơp đồng ${listHopDong[index].phong?.name ?? ""}",
-                                          style: TextStyle(fontSize: 22),
+                                          "Hơp đồng ${listHopDong[index].phong?.name ?? ""} (${DateFormat('MM-yyyy').format(DateTime.parse(listHopDong[index].dateStart!).toLocal())})",
+                                          style: TextStyle(fontSize: 18),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         SizedBox(height: 3),

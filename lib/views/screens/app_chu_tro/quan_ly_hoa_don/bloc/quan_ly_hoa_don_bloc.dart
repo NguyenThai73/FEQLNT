@@ -26,7 +26,8 @@ class QuanLyHoaDonBloc extends Bloc<QuanLyHoaDonEvent, QuanLyHoaDonState> {
     emit(QuanLyHoaDonLoading());
     try {
       if (event is GetListHoaDonEvent) {
-        var response = await HoaDonProvider.getList();
+        
+        var response = await HoaDonProvider.getList(status: event.selectedStatus, dateSearch: event.date);
         emit(QuanLyHoaDonSuccess(list: response));
       } else if (event is ThemHoaDonEvent) {
         if (event.hoaDonModel.name == null || event.hoaDonModel.name == "") {
@@ -47,34 +48,23 @@ class QuanLyHoaDonBloc extends Bloc<QuanLyHoaDonEvent, QuanLyHoaDonState> {
           }
         }
       } else if (event is SuaHoaDonEvent) {
-        // if (event.hopDongModel.idPhong == null) {
-        //   emit(QuanLyHoaDonError(error: "Chọn phòng"));
-        // } else if (event.dateEnd == null || event.dateStart == null) {
-        //   emit(QuanLyHoaDonError(error: "Chọn ngày"));
-        // } else if (event.hopDongModel.numberPeople == null || event.hopDongModel.numberPeople == 0) {
-        //   emit(QuanLyHoaDonError(error: "Điền số lượng người trọ"));
-        // } else if (event.hopDongModel.file == null) {
-        //   emit(QuanLyHoaDonError(error: "Cần tải file hợp đồng"));
-        // } else {
-        //   event.hopDongModel.dateEnd = convertTimeStamp(event.dateEnd!, "00:00:00");
-        //   event.hopDongModel.dateStart = convertTimeStamp(event.dateStart!, "00:00:00");
-        //   if (event.phongModel.id != event.hopDongModel.phong?.id) {
-        //     event.phongModel.status = 1;
-        //     await PhongProvider.sua(event.phongModel);
-        //   }
-        //   var check = await HoaDonProvider.sua(event.hopDongModel);
-        //   if (check) {
-        //     if (event.hopDongModel.status == 0) {
-        //      event.hopDongModel.phong?.status = 1;
-        //     } else {
-        //       event.hopDongModel.phong?.status = 2;
-        //     }
-        //     await PhongProvider.sua(event.hopDongModel.phong!);
-        //     emit(SuaSuccess(hopDongModel: event.hopDongModel));
-        //   } else {
-        //     emit(QuanLyHoaDonError(error: "Có lỗi xảy ra."));
-        //   }
-        // }
+        if (event.hoaDonModel.name == null || event.hoaDonModel.name == "") {
+          emit(QuanLyHoaDonError(error: "Chọn tháng"));
+        } else if (event.hoaDonModel.idHopDong == null) {
+          emit(QuanLyHoaDonError(error: "Hợp đồng"));
+        } else if (event.hoaDonModel.file == null || event.hoaDonModel.file == "") {
+          emit(QuanLyHoaDonError(error: "Tải ảnh hoá đơn"));
+        } else if (event.hoaDonModel.dueDate == null) {
+          emit(QuanLyHoaDonError(error: "Chọn ngày đến hạn"));
+        } else {
+          event.hoaDonModel.dueDate = convertTimeStamp(event.hoaDonModel.dueDate!, "00:00:00");
+          var checkThemmoi = await HoaDonProvider.sua(event.hoaDonModel);
+          if (checkThemmoi) {
+            emit(SuaSuccess(hopDongModel: event.hoaDonModel));
+          } else {
+            emit(QuanLyHoaDonError(error: "Có lỗi xảy ra."));
+          }
+        }
       }
     } catch (e) {
       emit(QuanLyHoaDonError(error: "Có lỗi xảy ra."));

@@ -142,7 +142,7 @@ class HopDongProvider {
   static Future<List<HopDongModel>> getListForNguoiDung() async {
     List<HopDongModel> listData = [];
     try {
-      var url = "$baseUrl/api/hop-dong/get/page?status:1&size:100000";
+      var url = "$baseUrl/api/hop-dong/get/page?filter=status:1&size:100000";
       var response = await http.get(Uri.parse(url.toString()));
       if (response.statusCode == 200) {
         var bodyConvert = jsonDecode(response.body);

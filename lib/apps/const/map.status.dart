@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 Map<int, String> listStatusPhong = {
   0: 'Đóng',
   1: 'Đang trống',
@@ -56,31 +58,46 @@ String valueStatusHopDong(int status) {
 
 Map<int, String> listStatusHoaDonFilter = {
   -1: 'Tất cả',
-  0: 'Quá hạn',
-  1: 'Chưa thu',
-  2: 'Đã đóng',
-  3: 'Xác nhận',
+  0: 'Chưa thu',
+  1: 'Đã đóng',
+  2: 'Xác nhận',
+  3: 'Quá hạn',
 };
 
 Map<int, String> listStatusHoaDon = {
-  0: 'Quá hạn',
-  1: 'Chưa thu',
-  2: 'Đã đóng',
-  3: 'Xác nhận',
+  0: 'Chưa thu',
+  1: 'Đã đóng',
+  2: 'Xác nhận',
+  3: 'Quá hạn',
 };
 
 String valueStatusHoaDon(int status) {
   switch (status) {
     case 0:
-      return 'Quá hạn';
-    case 1:
       return 'Chưa thu';
-    case 2:
+    case 1:
       return 'Đã đóng';
-    case 3:
+    case 2:
       return 'Xác nhận';
+    case 3:
+      return 'Quá hạn';
     default:
       return "";
+  }
+}
+
+Color colorsStatusHoaDon(int status) {
+  switch (status) {
+    case 0:
+      return Colors.orange;
+    case 1:
+      return Colors.green;
+    case 2:
+      return Colors.blue;
+    case 3:
+      return Colors.red;
+    default:
+      return Colors.black;
   }
 }
 

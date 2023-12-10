@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 
-String baseUrl = "http://192.168.12.101:8081";
+String baseUrl = "http://192.168.1.173:8081";
 
 Future<String?> handleUploadFile() async {
   String? fileName;

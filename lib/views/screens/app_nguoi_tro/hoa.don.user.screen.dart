@@ -1,14 +1,19 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:fe/apps/const/map.status.dart';
 import 'package:fe/apps/funtion/format.dart';
 import 'package:fe/models/dich_vu/dich.vu.model.dart';
 import 'package:fe/models/hoa_don/hoa.don.model.dart';
-import 'package:fe/views/screens/app_chu_tro/quan_ly_hoa_don/ui/xem.hoa.don.dart';
+import 'package:fe/models/nguoi-dung/user.model.dart';
+import 'package:fe/views/screens/app_nguoi_tro/xem.hoa.don.user.dart';
 import 'package:fe/z_provider/dich.vu.provider.dart';
 import 'package:fe/z_provider/hoa.don.provider.dart';
+import 'package:fe/z_provider/nguoi.dung.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HoaDonNTScreen extends StatefulWidget {
@@ -20,11 +25,37 @@ class HoaDonNTScreen extends StatefulWidget {
 
 class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
   final ScrollController _scrollController = ScrollController();
+  NguoiDungModel myAccount = NguoiDungModel();
+  NguoiDungModel admin = NguoiDungModel();
   List<HoaDonModel> listHoaDon = [];
+  Uri launchUri = Uri(
+    scheme: 'tel',
+    path: "0987654321",
+  );
   getData() async {
-    var response = await HoaDonProvider.getList();
+    await getProfile();
+    await getHoaDon();
+  }
+
+  getProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString("id");
+    if (id != null) {
+      var nguoiDungModelGet = await NguoiDungProvider.getUserById(id: id);
+      var admin = await NguoiDungProvider.getAdmin();
+      myAccount = nguoiDungModelGet;
+      admin = admin;
+      launchUri = Uri(
+        scheme: 'tel',
+        path: admin.sdt ?? "0987654321",
+      );
+    }
+  }
+
+  getHoaDon() async {
+    var lisHoaDon = await HoaDonProvider.getListHoaDonTheoHopDong(idHopDong: myAccount.idHopDong ?? 0);
     setState(() {
-      listHoaDon = response;
+      listHoaDon = lisHoaDon;
     });
   }
 
@@ -40,13 +71,15 @@ class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         leading: const Row(),
+        title: Center(
+          child: Text(
+            "Hoá đơn",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         actions: [
           InkWell(
             onTap: () async {
-              final Uri launchUri = Uri(
-                scheme: 'tel',
-                path: "0349398690",
-              );
               await launchUrl(launchUri);
             },
             child: const Icon(
@@ -59,7 +92,7 @@ class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(5),
         child: Column(
           children: [
             Expanded(
@@ -70,7 +103,7 @@ class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
                   return Container(
                     margin: const EdgeInsets.all(10),
                     width: MediaQuery.of(context).size.width,
-                    height: 130,
+                    height: 135,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(width: 2, color: const Color.fromARGB(255, 105, 188, 255)),
@@ -101,15 +134,15 @@ class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
                         await Navigator.push<void>(
                           context,
                           MaterialPageRoute<void>(
-                            builder: (BuildContext context) => XemHoaDon(
+                            builder: (BuildContext context) => XemHoaDonUer(
                               hoaDonModel: listHoaDon[index],
-                              // callBack: (value) {
-                              //   if (value != null) {
-                              //     setState(() {
-                              //       listHoaDon[index] = value;
-                              //     });
-                              //   }
-                              // },
+                              callback: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    listHoaDon[index] = value;
+                                  });
+                                }
+                              },
                             ),
                           ),
                         );
@@ -130,15 +163,22 @@ class _HoaDonNTScreenState extends State<HoaDonNTScreen> {
                               children: [
                                 Text(
                                   "Hoá đơn tháng ${listHoaDon[index].name != null ? DateFormat('MM-yyyy').format(DateTime.parse(listHoaDon[index].name ?? "").toLocal()) : ""}",
-                                  style: TextStyle(fontSize: 22),
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                                   overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  "Phòng: ${listHoaDon[index].hopDong?.phong?.name ?? ""}",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  maxLines: 2,
                                 ),
                                 SizedBox(height: 3),
                                 Text(
                                   "Trạng thái: ${valueStatusHoaDon(listHoaDon[index].status ?? -1)}",
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
-                                  style: TextStyle(color: (listHoaDon[index].status == 1) ? Colors.green : Colors.red),
+                                  style: TextStyle(color: colorsStatusHoaDon(listHoaDon[index].status ?? -1), fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(height: 3),
                                 Text(

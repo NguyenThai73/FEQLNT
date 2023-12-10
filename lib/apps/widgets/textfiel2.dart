@@ -40,7 +40,7 @@ class _TextFiel2WidgetState extends State<TextFiel2Widget> {
             ? const Row()
             : Text(
                 widget.title,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
         TextField(
           inputFormatters: widget.inputFormatters,

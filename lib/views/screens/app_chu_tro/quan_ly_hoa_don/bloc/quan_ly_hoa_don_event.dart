@@ -9,8 +9,8 @@ abstract class QuanLyHoaDonEvent extends Equatable {
 
 class GetListHoaDonEvent extends QuanLyHoaDonEvent {
   final int selectedStatus;
-  final int numberPage;
-  const GetListHoaDonEvent({required this.selectedStatus, required this.numberPage});
+  final String? date;
+  const GetListHoaDonEvent({required this.selectedStatus, required this.date});
 
   @override
   List<Object> get props => [];
@@ -25,10 +25,8 @@ class ThemHoaDonEvent extends QuanLyHoaDonEvent {
 }
 
 class SuaHoaDonEvent extends QuanLyHoaDonEvent {
-  final HoaDonModel hopDongModel;
-  final String? dateEnd;
-  final String? dateStart;
-  const SuaHoaDonEvent({required this.hopDongModel,this.dateEnd, this.dateStart});
+  final HoaDonModel hoaDonModel;
+  const SuaHoaDonEvent({required this.hoaDonModel});
 
   @override
   List<Object> get props => [];
